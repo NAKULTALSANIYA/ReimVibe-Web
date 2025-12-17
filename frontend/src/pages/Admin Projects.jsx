@@ -135,7 +135,7 @@ export default function Projects() {
                 {p.link && (
                   <motion.a
                     whileHover={{ scale: 1.05 }}
-                    href={p.link}
+                    to={p.link}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-green-600 font-semibold hover:underline flex items-center gap-1"
