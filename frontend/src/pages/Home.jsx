@@ -149,7 +149,7 @@ useEffect(() => {
               </Link>
               <div className="relative flex flex-col items-center gap-2">
                 <Link to="https://christmas-offer.vercel.app" className="btn-xmas text-2xl">
-                 Chritmas Offer
+                 christmas Offer
                 </Link>
                 <div className="absolute top-18 text-xl text-accent font-semibold bg-black/20 px-3 py-1 rounded-lg backdrop-blur-sm">
                   <div className="flex gap-2">

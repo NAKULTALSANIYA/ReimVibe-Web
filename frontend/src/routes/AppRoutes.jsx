@@ -1,42 +1,84 @@
+
 import { Routes, Route } from "react-router-dom";
+import { lazy, Suspense } from "react";
 import MainLayout from "../layouts/MainLayout";
 import AdminMainLayout from "../layouts/AdminMainLayout";
-import Home from "../pages/Home";
-import About from "../pages/About";
-import Careers from "../pages/Careers";
-import Contact from "../pages/Contact";
-import Portfolio from "../pages/Portfolio";
-import Services from "../pages/Services";
-import NotFound from "../pages/NotFound";
-import Login from "../pages/Login";
-import Dashboard from "../pages/Dashboard";
-import Jobs from "../pages/Jobs";
-import JobForm from "../pages/JobForm";
-import JobView from "../pages/JobView";
-import Applications from "../pages/Admin Applications";
-import Messages from "../pages/Admin Messages";
-import Projects from "../pages/Admin Projects";
-import AdminServices from "../pages/Admin Services";
-// import AdminSettings from "../pages/Admin Settings";
-import AdminNotFound from "../pages/Admin NotFound";
 import ProtectedRoute from "../components/ProtectedRoute";
+
+// Lazy load all page components for code splitting
+const Home = lazy(() => import("../pages/Home"));
+const About = lazy(() => import("../pages/About"));
+const Careers = lazy(() => import("../pages/Careers"));
+const Contact = lazy(() => import("../pages/Contact"));
+const Portfolio = lazy(() => import("../pages/Portfolio"));
+const Services = lazy(() => import("../pages/Services"));
+const NotFound = lazy(() => import("../pages/NotFound"));
+const Login = lazy(() => import("../pages/Login"));
+const Dashboard = lazy(() => import("../pages/Dashboard"));
+const Jobs = lazy(() => import("../pages/Jobs"));
+const JobForm = lazy(() => import("../pages/JobForm"));
+const JobView = lazy(() => import("../pages/JobView"));
+const Applications = lazy(() => import("../pages/Admin Applications"));
+const Messages = lazy(() => import("../pages/Admin Messages"));
+const Projects = lazy(() => import("../pages/Admin Projects"));
+const AdminServices = lazy(() => import("../pages/Admin Services"));
+const AdminNotFound = lazy(() => import("../pages/Admin NotFound"));
+
+// Loading component for Suspense fallback
+const PageLoader = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+  </div>
+);
 
 export default function AppRoutes() {
   return (
     <Routes>
       {/* Public Routes */}
       <Route path="/" element={<MainLayout />}>
-        <Route index element={<Home />} />
-        <Route path="about" element={<About />} />
-        <Route path="careers" element={<Careers />} />
-        <Route path="contact" element={<Contact />} />
-        <Route path="portfolio" element={<Portfolio />} />
-        <Route path="services" element={<Services />} />
+        <Route index element={
+          <Suspense fallback={<PageLoader />}>
+            <Home />
+          </Suspense>
+        } />
+        <Route path="about" element={
+          <Suspense fallback={<PageLoader />}>
+            <About />
+          </Suspense>
+        } />
+        <Route path="careers" element={
+          <Suspense fallback={<PageLoader />}>
+            <Careers />
+          </Suspense>
+        } />
+        <Route path="contact" element={
+          <Suspense fallback={<PageLoader />}>
+            <Contact />
+          </Suspense>
+        } />
+        <Route path="portfolio" element={
+          <Suspense fallback={<PageLoader />}>
+            <Portfolio />
+          </Suspense>
+        } />
+        <Route path="services" element={
+          <Suspense fallback={<PageLoader />}>
+            <Services />
+          </Suspense>
+        } />
       </Route>
-      <Route path="*" element={<NotFound />} />
+      <Route path="*" element={
+        <Suspense fallback={<PageLoader />}>
+          <NotFound />
+        </Suspense>
+      } />
 
       {/* Public Route */}
-      <Route path="/login" element={<Login />} />
+      <Route path="/login" element={
+        <Suspense fallback={<PageLoader />}>
+          <Login />
+        </Suspense>
+      } />
 
       {/* Protected Admin Routes */}
       <Route
@@ -47,17 +89,56 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       >
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="jobs" element={<Jobs />} />
-        <Route path="jobs/add" element={<JobForm />} />
-        <Route path="jobs/edit/:id" element={<JobForm />} />
-        <Route path="jobs/view/:id" element={<JobView />} />
-        <Route path="applications" element={<Applications />} />
-        <Route path="messages" element={<Messages />} />
-        <Route path="projects" element={<Projects />} />
-        <Route path="services" element={<AdminServices />} />
-        {/* <Route path="settings" element={<AdminSettings />} /> */}
-        <Route path="*" element={<AdminNotFound />} />
+        <Route path="dashboard" element={
+          <Suspense fallback={<PageLoader />}>
+            <Dashboard />
+          </Suspense>
+        } />
+        <Route path="jobs" element={
+          <Suspense fallback={<PageLoader />}>
+            <Jobs />
+          </Suspense>
+        } />
+        <Route path="jobs/add" element={
+          <Suspense fallback={<PageLoader />}>
+            <JobForm />
+          </Suspense>
+        } />
+        <Route path="jobs/edit/:id" element={
+          <Suspense fallback={<PageLoader />}>
+            <JobForm />
+          </Suspense>
+        } />
+        <Route path="jobs/view/:id" element={
+          <Suspense fallback={<PageLoader />}>
+            <JobView />
+          </Suspense>
+        } />
+        <Route path="applications" element={
+          <Suspense fallback={<PageLoader />}>
+            <Applications />
+          </Suspense>
+        } />
+        <Route path="messages" element={
+          <Suspense fallback={<PageLoader />}>
+            <Messages />
+          </Suspense>
+        } />
+        <Route path="projects" element={
+          <Suspense fallback={<PageLoader />}>
+            <Projects />
+          </Suspense>
+        } />
+        <Route path="services" element={
+          <Suspense fallback={<PageLoader />}>
+            <AdminServices />
+          </Suspense>
+        } />
+        <Route path="*" element={
+          <Suspense fallback={<PageLoader />}>
+            <AdminNotFound />
+          </Suspense>
+        } />
       </Route>
     </Routes>
   );
