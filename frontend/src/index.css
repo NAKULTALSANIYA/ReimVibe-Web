@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+/* Base Backgrounds */
+.bgname {
+  background: linear-gradient(135deg, #000034, #000062);
+}
+
+/* Brand Text */
+.logotext {
+  color: #000034;
+}
+
+/* Cards */
+.bgcard {
+  background-color: #0a0a6a; /* slightly lighter than #000062 */
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease-in-out;
+}
+.bgcard:hover {
+  border-color: #22D4EC; /* accent border on hover */
+  box-shadow: 0px 4px 20px rgba(26, 188, 156, 0.6); /* teal glow */
+}
+
+/* Text Colors */
+.text-body {
+  color: #d1d5db; /* light gray for body text */
+}
+.text-accent {
+  color: #22D4EC; /* teal accent text */
+}
+
+/* Buttons */
+.btn-primary {
+  background: linear-gradient(90deg, #000062, #22D4EC);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+.btn-primary:hover {
+  background: linear-gradient(90deg, #22D4EC, #000062);
+  transform: scale(1.05);
+}
+
+.btn-outline {
+  border: 2px solid #22D4EC;
+  color: #22D4EC;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+.btn-outline:hover {
+  background-color: #22D4EC;
+  color: white;
+  transform: scale(1.05);
+}
+
+.btn-xmas{
+  background: linear-gradient(#bbe3e2) top  left,
+              linear-gradient(#ff0000) bottom right;
+  color: #000034;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
