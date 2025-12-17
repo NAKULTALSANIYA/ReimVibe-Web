@@ -7,8 +7,6 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 const Home = () => {
-
-
 const [project, setProject] = useState(0);
 const [year, setYear] = useState(0);
 const [client, setClient] = useState(0);
