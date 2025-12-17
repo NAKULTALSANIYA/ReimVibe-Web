@@ -1,3 +1,1 @@
-# Netlify redirect for client-side routing
-# This tells Netlify to serve index.html for all routes
 /*    /index.html   200

@@ -1,17 +1,5 @@
-# Apache .htaccess for client-side routing
-# This tells Apache to serve index.html for all routes that aren't physical files
-
 Options -MultiViews
 RewriteEngine On
-
-# Handle client-side routing
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . /index.html [L]
-
-# Security headers
-<IfModule mod_headers.c>
-    Header always set X-Content-Type-Options nosniff
-    Header always set X-Frame-Options DENY
-    Header always set X-XSS-Protection "1; mode=block"
-</IfModule>
