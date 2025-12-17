@@ -4,6 +4,7 @@ import project1 from "../assets/images/project1.png";
 import project2 from "../assets/images/project2.png";
 import project3 from "../assets/images/project3.jpg";
 import api from "../utils/api";
+import { Link } from "react-router-dom";
 
 function Portfolio() {
   const [loading, setLoading] = useState(true);
@@ -97,12 +98,12 @@ function Portfolio() {
         <p className="mt-4 text-gray-200">
           Let’s collaborate and bring your ideas to life.
         </p>
-        <a
-          href="/contact"
+        <Link
+          to="/contact"
           className="mt-6 inline-block btn-primary text-white px-8 py-3 rounded-full font-semibold transition"
         >
           Get in Touch
-        </a>
+        </Link>
       </section>
     </div>
   );
