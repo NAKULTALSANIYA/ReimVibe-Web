@@ -12,22 +12,29 @@
 
 /* Cards */
 .bgcard {
-  background-color: #0a0a6a; /* slightly lighter than #000062 */
+  background-color: #0a0a6a;
+  /* slightly lighter than #000062 */
   color: white;
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.3s ease-in-out;
 }
+
 .bgcard:hover {
-  border-color: #22D4EC; /* accent border on hover */
-  box-shadow: 0px 4px 20px rgba(26, 188, 156, 0.6); /* teal glow */
+  border-color: #22D4EC;
+  /* accent border on hover */
+  box-shadow: 0px 4px 20px rgba(26, 188, 156, 0.6);
+  /* teal glow */
 }
 
 /* Text Colors */
 .text-body {
-  color: #d1d5db; /* light gray for body text */
+  color: #d1d5db;
+  /* light gray for body text */
 }
+
 .text-accent {
-  color: #22D4EC; /* teal accent text */
+  color: #22D4EC;
+  /* teal accent text */
 }
 
 /* Buttons */
@@ -39,6 +46,7 @@
   font-weight: 600;
   transition: all 0.3s;
 }
+
 .btn-primary:hover {
   background: linear-gradient(90deg, #22D4EC, #000062);
   transform: scale(1.05);
@@ -52,18 +60,55 @@
   font-weight: 600;
   transition: all 0.3s;
 }
+
 .btn-outline:hover {
   background-color: #22D4EC;
   color: white;
   transform: scale(1.05);
 }
 
-.btn-xmas{
-  background: linear-gradient(#bbe3e2) top  left,
-              linear-gradient(#ff0000) bottom right;
-  color: #000034;
-  padding: 0.75rem 1.5rem;
+.btn-xmas {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: linear-gradient(145deg, #0b8130, #025322);
+  color: #d6b23a;
+  padding: 0.9rem 1.6rem;
   border-radius: 9999px;
-  font-weight: 600;
-  transition: all 0.3s;
+  border: none;
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: 0.01em;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.btn-xmas::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.25), transparent 45%),
+    radial-gradient(circle at 75% 70%, rgba(255, 255, 255, 0.15), transparent 40%);
+  pointer-events: none;
+}
+
+.btn-xmas .xmas-icon {
+  font-size: 1.35rem;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.25));
+}
+
+.btn-xmas .xmas-text {
+  position: relative;
+  z-index: 1;
+  background: linear-gradient(120deg, #f5d26a, #d6b23a, #f1c553);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.btn-xmas .xmas-gift {
+  font-size: 1.5rem;
+  margin-left: 0.25rem;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.25));
 }

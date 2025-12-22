@@ -1,9 +1,8 @@
 import { motion } from "framer-motion";
 import aboutImg from "../assets/images/reimvibes-logo.jpg";
-import { useState,react } from "react";
+import { useState,React } from "react";
 
 function About() {
-  const [loading, setLoading] = useState(false);
 
   const values = [
     { title: "Innovation", desc: "We deliver modern, cutting-edge digital solutions that transform businesses." },
@@ -15,14 +14,14 @@ function About() {
   return (
     <div className="bgname text-white">
       {/* Hero Section */}
-      <section className="py-24 text-center">
+      <section className="py-14 text-center">
         <motion.h1
           initial={{ opacity: 0, y: -40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="text-3xl sm:text-4xl md:text-5xl font-bold"
         >
-          About Us
+          About <span className="text-accent">Us</span>
         </motion.h1>
         <p className="mt-4 max-w-2xl mx-auto text-sm sm:text-base md:text-lg text-gray-200">
           We are a passionate team dedicated to empowering businesses with digital solutions
@@ -31,7 +30,7 @@ function About() {
       </section>
 
       {/* Company Overview */}
-      <section className="py-16 container mx-auto px-6 flex flex-col md:flex-row items-center gap-10">
+      <section className="py-10 container mx-auto px-6 flex flex-col md:flex-row items-center gap-8">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
@@ -42,7 +41,7 @@ function About() {
           <img
             src={aboutImg}
             alt="About Reimvibe Technologies"
-            className="rounded-2xl w-full max-w-md mx-auto shadow-lg shadow-accent/40"
+            className="rounded-2xl w-full max-w-96 mx-auto shadow-lg shadow-accent/40"
           />
         </motion.div>
 

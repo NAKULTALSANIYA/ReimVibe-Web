@@ -1,6 +1,7 @@
 import project1 from "../assets/images/project1.png";
 import project2 from "../assets/images/project2.png";
 import project3 from "../assets/images/project3.jpg";
+import tree from "../assets/images/Tree Image (4).png";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -145,9 +146,9 @@ useEffect(() => {
               </Link>
               <div className="relative flex flex-col items-center gap-2">
                 <Link to="https://christmas-offer.vercel.app" className="btn-xmas text-2xl">
-                 Christmas Offer
+                 <img className="w-10" src={tree} alt="abc" /> Christmas Offer
                 </Link>
-                <div className="absolute top-18 text-xl text-accent font-semibold bg-black/20 px-3 py-1 rounded-lg backdrop-blur-sm">
+                <div className="absolute top-20 text-xl text-accent font-semibold bg-black/20 px-3 py-1 rounded-lg backdrop-blur-sm">
                   <div className="flex gap-2">
                     <span>{countdown.days}d</span>
                     <span>{countdown.hours}h</span>
