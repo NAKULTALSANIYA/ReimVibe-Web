@@ -45,15 +45,9 @@ useEffect(() => {
 useEffect(() => {
   const calculateCountdown = () => {
     const now = new Date().getTime();
-    const currentYear = new Date().getFullYear();
     
-    // Set target date to December 25th of current year
-    let targetDate = new Date(currentYear, 11, 25, 0, 0, 0).getTime();
-    
-    // If it's already past December 25th this year, target next year's December 25th
-    if (now > targetDate) {
-      targetDate = new Date(currentYear + 1, 11, 25, 0, 0, 0).getTime();
-    }
+    // Set target date to January 1st, 2026
+    const targetDate = new Date(2026, 0, 1, 0, 0, 0).getTime();
     
     const difference = targetDate - now;
     
@@ -64,6 +58,8 @@ useEffect(() => {
       const seconds = Math.floor((difference % (1000 * 60)) / 1000);
       
       setCountdown({ days, hours, minutes, seconds });
+    } else {
+      setCountdown({ days: 0, hours: 0, minutes: 0, seconds: 0 });
     }
   };
 
