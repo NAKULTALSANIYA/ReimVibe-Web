@@ -67,13 +67,8 @@ export default function AppRoutes() {
           </Suspense>
         } />
       </Route>
-      <Route path="*" element={
-        <Suspense fallback={<PageLoader />}>
-          <NotFound />
-        </Suspense>
-      } />
 
-      {/* Public Route */}
+      {/* Public Login Route */}
       <Route path="/login" element={
         <Suspense fallback={<PageLoader />}>
           <Login />
@@ -140,6 +135,13 @@ export default function AppRoutes() {
           </Suspense>
         } />
       </Route>
+
+      {/* Catch-all 404 - MUST BE LAST */}
+      <Route path="*" element={
+        <Suspense fallback={<PageLoader />}>
+          <NotFound />
+        </Suspense>
+      } />
     </Routes>
   );
 }
