@@ -24,11 +24,11 @@ export default function Navbar() {
         {/* Desktop Menu */}
         <ul className="hidden md:flex gap-6 font-semibold">
           <li><Link to="/" className={`hover:text-[#1abc9c] ${isActive('/') ? 'text-[#1abc9c]' : ''}`}>Home</Link></li>
-          <li><Link to="/about" className={`hover:text-[#1abc9c] ${isActive('/about') ? 'text-[#1abc9c]' : ''}`}>About</Link></li>
+          <li><Link to="/about" className={`hover:text-[#1abc9c] ${isActive('/about') ? 'text-[#1abc9c]' : ''}`}>About Us</Link></li>
           <li><Link to="/services" className={`hover:text-[#1abc9c] ${isActive('/services') ? 'text-[#1abc9c]' : ''}`}>Services</Link></li>
           <li><Link to="/portfolio" className={`hover:text-[#1abc9c] ${isActive('/portfolio') ? 'text-[#1abc9c]' : ''}`}>Portfolio</Link></li>
           <li><Link to="/careers" className={`hover:text-[#1abc9c] ${isActive('/careers') ? 'text-[#1abc9c]' : ''}`}>Careers</Link></li>
-          <li><Link to="/contact" className={`hover:text-[#1abc9c] ${isActive('/contact') ? 'text-[#1abc9c]' : ''}`}>Contact</Link></li>
+          <li><Link to="/contact" className={`hover:text-[#1abc9c] ${isActive('/contact') ? 'text-[#1abc9c]' : ''}`}>Contact Us</Link></li>
         </ul>
 
         {/* Mobile Hamburger Button */}

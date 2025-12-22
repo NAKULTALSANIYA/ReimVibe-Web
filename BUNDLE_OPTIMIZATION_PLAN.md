@@ -85,3 +85,8 @@ Wrap routes in Suspense components for better UX during chunk loading.
 - Current warning should be resolved
 - Initial bundle size: ~2MB → ~600KB
 - Load time improvement: 40-60% on 3G networks
+
+
+
+about us 
+button christmas 

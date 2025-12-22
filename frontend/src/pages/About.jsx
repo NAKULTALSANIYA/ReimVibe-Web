@@ -22,7 +22,7 @@ function About() {
           transition={{ duration: 0.6 }}
           className="text-3xl sm:text-4xl md:text-5xl font-bold"
         >
-          About <span className="text-accent ">Reimvibe Technologies</span>
+          About Us
         </motion.h1>
         <p className="mt-4 max-w-2xl mx-auto text-sm sm:text-base md:text-lg text-gray-200">
           We are a passionate team dedicated to empowering businesses with digital solutions
