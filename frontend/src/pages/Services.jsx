@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Code, Smartphone, Bot } from "lucide-react"; // fallback icons
+import { Code, Smartphone, Bot, Zap, Palette, TrendingUp, Share2, GraduationCap, Briefcase, BarChart3 } from "lucide-react";
 import { useState,React} from "react";
 
 function Services() {
-   const [services, setServices] = useState([
+   const [services] = useState([
     {
       id: 1,
       title: "Web Development",
@@ -17,13 +17,43 @@ function Services() {
     },
     {
       id: 3,
-      title: "AI & Automation",
-      description: "Intelligent automation solutions and AI-powered tools to boost productivity."
+      title: "AI Development",
+      description: "Cutting-edge artificial intelligence solutions tailored to your business needs."
     },
     {
       id: 4,
-      title: "UI/UX Design",
-      description: "Beautiful, user-friendly designs that enhance user engagement and satisfaction."
+      title: "Automation",
+      description: "Process automation to streamline workflows and improve operational efficiency."
+    },
+    {
+      id: 5,
+      title: "Graphic Designing",
+      description: "Creative visual designs that captivate audiences and strengthen brand identity."
+    },
+    {
+      id: 6,
+      title: "Digital Marketing",
+      description: "Strategic digital marketing campaigns to boost your online presence and reach."
+    },
+    {
+      id: 7,
+      title: "Social Media Marketing",
+      description: "Engaging content and strategies to grow your social media presence and engagement."
+    },
+    {
+      id: 8,
+      title: "Training Institute",
+      description: "Professional training programs to upskill your team with industry-relevant expertise."
+    },
+    {
+      id: 9,
+      title: "Research and Consultancy",
+      description: "In-depth research and expert consultancy to drive strategic business decisions."
+    },
+    {
+      id: 10,
+      title: "Data Science and Data Analytics",
+      description: "Transform raw data into actionable insights for informed business strategies."
     }
   ]);
 
@@ -32,8 +62,15 @@ function Services() {
     if (!name) return <Code className="w-10 h-10 text-accent" />;
     const lower = name.toLowerCase();
     if (lower.includes("web")) return <Code className="w-10 h-10 text-accent" />;
-    if (lower.includes("mobile")) return <Smartphone className="w-10 h-10 text-accent" />;
-    if (lower.includes("ai") || lower.includes("automation")) return <Bot className="w-10 h-10 text-accent" />;
+    if (lower.includes("mobile") || lower.includes("app")) return <Smartphone className="w-10 h-10 text-accent" />;
+    if (lower.includes("ai")) return <Bot className="w-10 h-10 text-accent" />;
+    if (lower.includes("automation")) return <Zap className="w-10 h-10 text-accent" />;
+    if (lower.includes("graphic") || lower.includes("design")) return <Palette className="w-10 h-10 text-accent" />;
+    if (lower.includes("digital marketing")) return <TrendingUp className="w-10 h-10 text-accent" />;
+    if (lower.includes("social media")) return <Share2 className="w-10 h-10 text-accent" />;
+    if (lower.includes("training")) return <GraduationCap className="w-10 h-10 text-accent" />;
+    if (lower.includes("research") || lower.includes("consultancy")) return <Briefcase className="w-10 h-10 text-accent" />;
+    if (lower.includes("data")) return <BarChart3 className="w-10 h-10 text-accent" />;
     return <Code className="w-10 h-10 text-accent" />;
   };
 
