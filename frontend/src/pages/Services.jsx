@@ -1,10 +1,10 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Code, Smartphone, Bot, Zap, Palette, TrendingUp, Share2, GraduationCap, Briefcase, BarChart3 } from "lucide-react";
-import { useState,React} from "react";
+import { Code, Smartphone, Bot, Zap, Palette, TrendingUp, Share2, GraduationCap, Briefcase, BarChart3, Wifi } from "lucide-react";
+import { useState, React } from "react";
 
 function Services() {
-   const [services] = useState([
+  const [services] = useState([
     {
       id: 1,
       title: "Web Development",
@@ -41,11 +41,6 @@ function Services() {
       description: "Engaging content and strategies to grow your social media presence and engagement."
     },
     {
-      id: 8,
-      title: "Training Institute",
-      description: "Professional training programs to upskill your team with industry-relevant expertise."
-    },
-    {
       id: 9,
       title: "Research and Consultancy",
       description: "In-depth research and expert consultancy to drive strategic business decisions."
@@ -54,9 +49,18 @@ function Services() {
       id: 10,
       title: "Data Science and Data Analytics",
       description: "Transform raw data into actionable insights for informed business strategies."
-    }
+    },
+    {
+      id: 8,
+      title: "Training Institute",
+      description: "Professional training programs to upskill your team with industry-relevant expertise."
+    },
+    {
+      id: 11,
+      title: "IoT Development",
+      description: "Smart device integration and Internet of Things solutions for connected ecosystems."
+    },
   ]);
-
   // Map icons dynamically if API doesn’t send them
   const getIcon = (name) => {
     if (!name) return <Code className="w-10 h-10 text-accent" />;
@@ -71,6 +75,7 @@ function Services() {
     if (lower.includes("training")) return <GraduationCap className="w-10 h-10 text-accent" />;
     if (lower.includes("research") || lower.includes("consultancy")) return <Briefcase className="w-10 h-10 text-accent" />;
     if (lower.includes("data")) return <BarChart3 className="w-10 h-10 text-accent" />;
+    if (lower.includes("iot")) return <Wifi className="w-10 h-10 text-accent" />;
     return <Code className="w-10 h-10 text-accent" />;
   };
 
@@ -94,31 +99,31 @@ function Services() {
       {/* Service Cards */}
       <section className="py-16">
         <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-            {services.map((s, i) => (
-              <motion.div
-                key={s.id || i}
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: i * 0.2 }}
-                viewport={{ once: true }}
-                className="bgcard rounded-xl p-6 text-center hover:scale-105 transition-transform hover:shadow-accent"
-              >
-                <div className="flex justify-center mb-4">
-                  {getIcon(s.title)}
-                </div>
-                <h3 className="text-lg sm:text-xl font-semibold text-accent">
-                  {s.title}
-                </h3>
-                <p className="mt-3 text-gray-200 text-sm sm:text-base">
-                  {s.desc || s.description}
-                </p>
-                {/* <Link
+          {services.map((s, i) => (
+            <motion.div
+              key={s.id || i}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: i * 0.2 }}
+              viewport={{ once: true }}
+              className="bgcard rounded-xl p-6 text-center hover:scale-105 transition-transform hover:shadow-accent"
+            >
+              <div className="flex justify-center mb-4">
+                {getIcon(s.title)}
+              </div>
+              <h3 className="text-lg sm:text-xl font-semibold text-accent">
+                {s.title}
+              </h3>
+              <p className="mt-3 text-gray-200 text-sm sm:text-base">
+                {s.desc || s.description}
+              </p>
+              {/* <Link
                   to={`/services/${s.id}`}
                   className="mt-4 inline-block text-accent font-semibold hover:underline"
                 >
                   Learn More →
                 </Link> */}
-              </motion.div>))}
+            </motion.div>))}
         </div>
       </section>
 
