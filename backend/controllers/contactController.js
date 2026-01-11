@@ -5,10 +5,10 @@ const getContacts = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+    const offset = (page - 1) * limit;
 
-    const total = await Contact.countDocuments();
-    const contacts = await Contact.find().skip(skip).limit(limit);
+    const total = await Contact.count();
+    const contacts = await Contact.findAll({ limit, offset });
 
     if (contacts.length === 0) {
       return res.json({ message: 'No messages found' });
@@ -31,7 +31,7 @@ const getContacts = async (req, res) => {
 // Get single contact
 const getContact = async (req, res) => {
   try {
-    const contact = await Contact.findById(req.params.id);
+    const contact = await Contact.findByPk(req.params.id);
     if (!contact) return res.status(404).json({ message: 'Contact not found' });
     res.json(contact);
   } catch (error) {
@@ -41,15 +41,13 @@ const getContact = async (req, res) => {
 
 // Create contact
 const createContact = async (req, res) => {
-  const contact = new Contact({
-    name: req.body.name,
-    email: req.body.email,
-    phone: req.body.phone,
-    message: req.body.message,
-  });
-
   try {
-    const newContact = await contact.save();
+    const newContact = await Contact.create({
+      name: req.body.name,
+      email: req.body.email,
+      phone: req.body.phone,
+      message: req.body.message,
+    });
     res.status(201).json(newContact);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -65,11 +63,8 @@ const updateContact = async (req, res) => {
     if (req.body.phone !== undefined) updateData.phone = req.body.phone;
     if (req.body.message !== undefined) updateData.message = req.body.message;
 
-    const updatedContact = await Contact.findOneAndUpdate(
-      { _id: req.params.id },
-      { $set: updateData },
-      { new: true }
-    );
+    await Contact.update(updateData, { where: { id: req.params.id } });
+    const updatedContact = await Contact.findByPk(req.params.id);
 
     if (!updatedContact) return res.status(404).json({ message: 'Contact not found' });
 
@@ -82,8 +77,8 @@ const updateContact = async (req, res) => {
 // Delete contact
 const deleteContact = async (req, res) => {
   try {
-    const contact = await Contact.findByIdAndDelete(req.params.id);
-    if (!contact) return res.status(404).json({ message: 'Contact not found' });
+    const deleted = await Contact.destroy({ where: { id: req.params.id } });
+    if (!deleted) return res.status(404).json({ message: 'Contact not found' });
 
     res.json({ message: 'Contact deleted' });
   } catch (error) {

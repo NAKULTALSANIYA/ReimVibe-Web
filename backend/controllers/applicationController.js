@@ -5,10 +5,18 @@ const getApplications = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+    const offset = (page - 1) * limit;
 
-    const total = await Application.countDocuments();
-    const applications = await Application.find().populate('jobId').skip(skip).limit(limit);
+    const total = await Application.count();
+    const applications = await Application.findAll({ 
+      limit, 
+      offset,
+      include: [{
+        model: Application.sequelize.models.Job,
+        as: 'job',
+        attributes: ['id', 'title']
+      }]
+    });
 
     if (applications.length === 0) {
       return res.json({ message: 'No applications found' });
@@ -31,7 +39,13 @@ const getApplications = async (req, res) => {
 // Get single application
 const getApplication = async (req, res) => {
   try {
-    const application = await Application.findById(req.params.id).populate('jobId');
+    const application = await Application.findByPk(req.params.id, {
+      include: [{
+        model: Application.sequelize.models.Job,
+        as: 'job',
+        attributes: ['id', 'title']
+      }]
+    });
     if (!application) return res.status(404).json({ message: 'Application not found' });
     res.json(application);
   } catch (error) {
@@ -41,17 +55,15 @@ const getApplication = async (req, res) => {
 
 // Create application
 const createApplication = async (req, res) => {
-  const application = new Application({
-    name: req.body.name,
-    email: req.body.email,
-    phone: req.body.phone,
-    resume: req.body.resume,
-    coverLetter: req.body.coverLetter,
-    jobId: req.body.jobId,
-  });
-
   try {
-    const newApplication = await application.save();
+    const newApplication = await Application.create({
+      name: req.body.name,
+      email: req.body.email,
+      phone: req.body.phone,
+      resume: req.body.resume,
+      coverLetter: req.body.coverLetter,
+      jobId: req.body.jobId,
+    });
     res.status(201).json(newApplication);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -64,11 +76,8 @@ const updateApplicationStatus = async (req, res) => {
     const updateData = {};
     if (req.body.status !== undefined) updateData.status = req.body.status;
 
-    const updatedApplication = await Application.findOneAndUpdate(
-      { _id: req.params.id },
-      { $set: updateData },
-      { new: true }
-    );
+    await Application.update(updateData, { where: { id: req.params.id } });
+    const updatedApplication = await Application.findByPk(req.params.id);
 
     if (!updatedApplication) return res.status(404).json({ message: 'Application not found' });
 
@@ -81,8 +90,8 @@ const updateApplicationStatus = async (req, res) => {
 // Delete application
 const deleteApplication = async (req, res) => {
   try {
-    const application = await Application.findByIdAndDelete(req.params.id);
-    if (!application) return res.status(404).json({ message: 'Application not found' });
+    const deleted = await Application.destroy({ where: { id: req.params.id } });
+    if (!deleted) return res.status(404).json({ message: 'Application not found' });
 
     res.json({ message: 'Application deleted' });
   } catch (error) {

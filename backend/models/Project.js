@@ -1,26 +1,31 @@
-import mongoose from 'mongoose';
+import { DataTypes } from 'sequelize';
+import sequelize from '../config/database.js';
 
-const projectSchema = new mongoose.Schema({
+const Project = sequelize.define('Project', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true
+  },
   title: {
-    type: String,
-    required: true,
+    type: DataTypes.STRING,
+    allowNull: false
   },
   description: {
-    type: String,
-    required: true,
+    type: DataTypes.TEXT,
+    allowNull: false
   },
   image: {
-    type: String,
-    required: true,
+    type: DataTypes.STRING,
+    allowNull: false
   },
   link: {
-    type: String,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+    type: DataTypes.STRING,
+    allowNull: false
+  }
+}, {
+  tableName: 'projects',
+  timestamps: true
 });
 
-export default mongoose.model('Project', projectSchema);
+export default Project;

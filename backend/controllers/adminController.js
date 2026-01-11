@@ -1,11 +1,12 @@
 import Admin from '../models/Admin.js';
 import jwt from 'jsonwebtoken';
+import { Op } from 'sequelize';
 
 // Generate JWT token
 const generateToken = (admin) => {
   return jwt.sign(
     { 
-      id: admin._id, 
+      id: admin.id, 
       email: admin.email, 
       role: admin.role 
     },
@@ -20,7 +21,7 @@ const generateToken = (admin) => {
 export const setupAdmin = async (req, res) => {
   try {
     // Check if any admin already exists
-    const existingAdmins = await Admin.countDocuments();
+    const existingAdmins = await Admin.count();
     if (existingAdmins > 0) {
       return res.status(400).json({ 
         message: 'Admin setup already completed. Admin users already exist.' 
@@ -44,7 +45,9 @@ export const setupAdmin = async (req, res) => {
 
     // Check if admin with email or username already exists
     const existingAdmin = await Admin.findOne({
-      $or: [{ email }, { username }]
+      where: {
+        [Op.or]: [{ email }, { username }]
+      }
     });
 
     if (existingAdmin) {
@@ -68,7 +71,7 @@ export const setupAdmin = async (req, res) => {
       message: 'Admin user created successfully',
       token,
       admin: {
-        id: admin._id,
+        id: admin.id,
         username: admin.username,
         email: admin.email,
         role: admin.role
@@ -98,7 +101,10 @@ export const loginAdmin = async (req, res) => {
     }
 
     // Find admin by email
-    const admin = await Admin.findOne({ email, isActive: true });
+    const admin = await Admin.findOne({ 
+      where: { email, isActive: true } 
+    });
+    
     if (!admin) {
       return res.status(401).json({ 
         message: 'Invalid credentials' 
@@ -120,11 +126,20 @@ export const loginAdmin = async (req, res) => {
     // Generate token
     const token = generateToken(admin);
 
+    // Set token in HTTP-only cookie for security
+    const cookieOptions = {
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax'
+    };
+
+    res.cookie('token', token, cookieOptions);
+
     res.json({
       message: 'Login successful',
-      token,
       admin: {
-        id: admin._id,
+        id: admin.id,
         username: admin.username,
         email: admin.email,
         role: admin.role,
@@ -145,14 +160,16 @@ export const loginAdmin = async (req, res) => {
 // @access  Private
 export const getAdminProfile = async (req, res) => {
   try {
-    const admin = await Admin.findById(req.admin.id).select('-password');
+    const admin = await Admin.findByPk(req.admin.id, {
+      attributes: { exclude: ['password'] }
+    });
     if (!admin) {
       return res.status(404).json({ message: 'Admin not found' });
     }
 
     res.json({
       admin: {
-        id: admin._id,
+        id: admin.id,
         username: admin.username,
         email: admin.email,
         role: admin.role,
@@ -199,7 +216,9 @@ export const createAdmin = async (req, res) => {
 
     // Check if admin with email or username already exists
     const existingAdmin = await Admin.findOne({
-      $or: [{ email }, { username }]
+      where: {
+        [Op.or]: [{ email }, { username }]
+      }
     });
 
     if (existingAdmin) {
@@ -219,7 +238,7 @@ export const createAdmin = async (req, res) => {
     res.status(201).json({
       message: 'Admin user created successfully',
       admin: {
-        id: admin._id,
+        id: admin.id,
         username: admin.username,
         email: admin.email,
         role: admin.role,
@@ -247,7 +266,10 @@ export const getAllAdmins = async (req, res) => {
       });
     }
 
-    const admins = await Admin.find().select('-password').sort({ createdAt: -1 });
+    const admins = await Admin.findAll({
+      attributes: { exclude: ['password'] },
+      order: [['createdAt', 'DESC']]
+    });
 
     res.json({
       count: admins.length,
@@ -277,7 +299,7 @@ export const updateAdmin = async (req, res) => {
     const { id } = req.params;
     const { username, email, role, isActive } = req.body;
 
-    const admin = await Admin.findById(id);
+    const admin = await Admin.findByPk(id);
     if (!admin) {
       return res.status(404).json({ message: 'Admin not found' });
     }
@@ -293,7 +315,7 @@ export const updateAdmin = async (req, res) => {
     res.json({
       message: 'Admin updated successfully',
       admin: {
-        id: admin._id,
+        id: admin.id,
         username: admin.username,
         email: admin.email,
         role: admin.role,
@@ -323,19 +345,19 @@ export const deleteAdmin = async (req, res) => {
 
     const { id } = req.params;
 
-    const admin = await Admin.findById(id);
+    const admin = await Admin.findByPk(id);
     if (!admin) {
       return res.status(404).json({ message: 'Admin not found' });
     }
 
     // Prevent deleting yourself
-    if (admin._id.toString() === req.admin.id) {
+    if (admin.id === req.admin.id) {
       return res.status(400).json({ 
         message: 'You cannot delete your own account' 
       });
     }
 
-    await Admin.findByIdAndDelete(id);
+    await admin.destroy();
 
     res.json({ message: 'Admin deleted successfully' });
   } catch (error) {

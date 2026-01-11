@@ -1,18 +1,28 @@
-import mongoose from 'mongoose';
+import { DataTypes } from 'sequelize';
+import sequelize from '../config/database.js';
 
-const serviceSchema = new mongoose.Schema({
+const Service = sequelize.define('Service', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true
+  },
   title: {
-    type: String,
-    required: true,
+    type: DataTypes.STRING,
+    allowNull: false
   },
   description: {
-    type: String,
-    required: true,
+    type: DataTypes.TEXT,
+    allowNull: false
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+  icon: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    defaultValue: 'code'
+  }
+}, {
+  tableName: 'services',
+  timestamps: true
 });
 
-export default mongoose.model('Service', serviceSchema);
+export default Service;

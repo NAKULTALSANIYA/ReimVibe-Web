@@ -5,10 +5,10 @@ const getServices = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+    const offset = (page - 1) * limit;
 
-    const total = await Service.countDocuments();
-    const services = await Service.find().skip(skip).limit(limit);
+    const total = await Service.count();
+    const services = await Service.findAll({ limit, offset });
 
     if (services.length === 0) {
       return res.json({ message: 'No services found' });
@@ -31,7 +31,7 @@ const getServices = async (req, res) => {
 // Get single service
 const getService = async (req, res) => {
   try {
-    const service = await Service.findById(req.params.id);
+    const service = await Service.findByPk(req.params.id);
     if (!service) return res.status(404).json({ message: 'Service not found' });
     res.json(service);
   } catch (error) {
@@ -41,13 +41,12 @@ const getService = async (req, res) => {
 
 // Create service
 const createService = async (req, res) => {
-  const service = new Service({
-    title: req.body.title,
-    description: req.body.description,
-  });
-
   try {
-    const newService = await service.save();
+    const newService = await Service.create({
+      title: req.body.title,
+      description: req.body.description,
+      icon: req.body.icon || 'code',
+    });
     res.status(201).json(newService);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -60,12 +59,10 @@ const updateService = async (req, res) => {
     const updateData = {};
     if (req.body.title !== undefined) updateData.title = req.body.title;
     if (req.body.description !== undefined) updateData.description = req.body.description;
+    if (req.body.icon !== undefined) updateData.icon = req.body.icon;
 
-    const updatedService = await Service.findOneAndUpdate(
-      { _id: req.params.id },
-      { $set: updateData },
-      { new: true }
-    );
+    await Service.update(updateData, { where: { id: req.params.id } });
+    const updatedService = await Service.findByPk(req.params.id);
 
     if (!updatedService) return res.status(404).json({ message: 'Service not found' });
 
@@ -78,8 +75,8 @@ const updateService = async (req, res) => {
 // Delete service
 const deleteService = async (req, res) => {
   try {
-    const service = await Service.findByIdAndDelete(req.params.id);
-    if (!service) return res.status(404).json({ message: 'Service not found' });
+    const deleted = await Service.destroy({ where: { id: req.params.id } });
+    if (!deleted) return res.status(404).json({ message: 'Service not found' });
 
     res.json({ message: 'Service deleted' });
   } catch (error) {

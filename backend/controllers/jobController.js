@@ -5,10 +5,10 @@ const getJobs = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+    const offset = (page - 1) * limit;
 
-    const total = await Job.countDocuments();
-    const jobs = await Job.find().skip(skip).limit(limit);
+    const total = await Job.count();
+    const jobs = await Job.findAll({ limit, offset });
 
     if (jobs.length === 0) {
       return res.json({ message: 'No jobs found' });
@@ -31,7 +31,7 @@ const getJobs = async (req, res) => {
 // Get single job
 const getJob = async (req, res) => {
   try {
-    const job = await Job.findById(req.params.id);
+    const job = await Job.findByPk(req.params.id);
     if (!job) return res.status(404).json({ message: 'Job not found' });
     res.json(job);
   } catch (error) {
@@ -41,16 +41,14 @@ const getJob = async (req, res) => {
 
 // Create job
 const createJob = async (req, res) => {
-  const job = new Job({
-    title: req.body.title,
-    type: req.body.type,
-    location: req.body.location,
-    description: req.body.description,
-    status: req.body.status,
-  });
-
   try {
-    const newJob = await job.save();
+    const newJob = await Job.create({
+      title: req.body.title,
+      type: req.body.type,
+      location: req.body.location,
+      description: req.body.description,
+      status: req.body.status,
+    });
     res.status(201).json(newJob);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -67,11 +65,8 @@ const updateJob = async (req, res) => {
     if (req.body.description !== undefined) updateData.description = req.body.description;
     if (req.body.status !== undefined) updateData.status = req.body.status;
 
-    const updatedJob = await Job.findOneAndUpdate(
-      { _id: req.params.id },
-      { $set: updateData },
-      { new: true }
-    );
+    await Job.update(updateData, { where: { id: req.params.id } });
+    const updatedJob = await Job.findByPk(req.params.id);
 
     if (!updatedJob) return res.status(404).json({ message: 'Job not found' });
 
@@ -84,8 +79,8 @@ const updateJob = async (req, res) => {
 // Delete job
 const deleteJob = async (req, res) => {
   try {
-    const job = await Job.findByIdAndDelete(req.params.id);
-    if (!job) return res.status(404).json({ message: 'Job not found' });
+    const deleted = await Job.destroy({ where: { id: req.params.id } });
+    if (!deleted) return res.status(404).json({ message: 'Job not found' });
 
     res.json({ message: 'Job deleted' });
   } catch (error) {

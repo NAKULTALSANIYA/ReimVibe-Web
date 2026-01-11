@@ -1,31 +1,35 @@
-import mongoose from 'mongoose';
+import { DataTypes } from 'sequelize';
+import sequelize from '../config/database.js';
 
-const jobSchema = new mongoose.Schema({
+const Job = sequelize.define('Job', {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true
+  },
   title: {
-    type: String,
-    required: true,
+    type: DataTypes.STRING,
+    allowNull: false
   },
   type: {
-    type: String,
-    required: true,
+    type: DataTypes.STRING,
+    allowNull: false
   },
   location: {
-    type: String,
-    required: true,
+    type: DataTypes.STRING,
+    allowNull: false
   },
   description: {
-    type: String,
-    required: true,
+    type: DataTypes.TEXT,
+    allowNull: false
   },
   status: {
-    type: String,
-    enum: ['Open', 'Closed'],
-    default: 'Open',
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+    type: DataTypes.ENUM('Open', 'Closed'),
+    defaultValue: 'Open'
+  }
+}, {
+  tableName: 'jobs',
+  timestamps: true
 });
 
-export default mongoose.model('Job', jobSchema);
+export default Job;
