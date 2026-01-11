@@ -1,14 +1,28 @@
 import { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { toast } from "react-toastify";
+import api from "../utils/api";
 
 export default function Login() {
   const { login } = useAuth();
-  const [email, setEmail] = useState("info@reimvibetechnologies.com");
-  const [password, setPassword] = useState("admin123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    login(email, password);
+    setLoading(true);
+
+    try {
+      const response = await api.post("/admin/login", { email, password });
+      toast.success(response.data.message || "Login successful!");
+      login(response.data.admin);
+    } catch (error) {
+      const message = error.response?.data?.message || "Login failed. Please try again.";
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -23,7 +37,7 @@ export default function Login() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full border p-2 rounded-md"
-              placeholder="info@reimvibetechnologies.com"
+              placeholder="Enter your email"
               required
             />
           </div>
@@ -34,15 +48,16 @@ export default function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full border p-2 rounded-md"
-              placeholder="********"
+              placeholder="Enter your password"
               required
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-yellow-400 px-6 py-2 rounded-md font-semibold hover:bg-yellow-300"
+            disabled={loading}
+            className="w-full bg-yellow-400 px-6 py-2 rounded-md font-semibold hover:bg-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Login
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
       </div>

@@ -1,82 +1,47 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Code, Smartphone, Bot, Zap, Palette, TrendingUp, Share2, GraduationCap, Briefcase, BarChart3, Wifi } from "lucide-react";
-import { useState, React } from "react";
+import { useState, useEffect } from "react";
+import api from "../utils/api";
+
+// Icon name to component mapping
+const ICON_MAP = {
+  code: Code,
+  smartphone: Smartphone,
+  bot: Bot,
+  zap: Zap,
+  palette: Palette,
+  'trending-up': TrendingUp,
+  'share-2': Share2,
+  'graduation-cap': GraduationCap,
+  briefcase: Briefcase,
+  'bar-chart-3': BarChart3,
+  wifi: Wifi,
+};
 
 function Services() {
-  const [services] = useState([
-    {
-      id: 1,
-      title: "Web Development",
-      description: "Custom, scalable, and modern web applications built with the latest technologies."
-    },
-    {
-      id: 2,
-      title: "Mobile App Development",
-      description: "iOS, Android & cross-platform mobile solutions for seamless user experiences."
-    },
-    {
-      id: 3,
-      title: "AI Development",
-      description: "Cutting-edge artificial intelligence solutions tailored to your business needs."
-    },
-    {
-      id: 4,
-      title: "Automation",
-      description: "Process automation to streamline workflows and improve operational efficiency."
-    },
-    {
-      id: 5,
-      title: "Graphic Designing",
-      description: "Creative visual designs that captivate audiences and strengthen brand identity."
-    },
-    {
-      id: 6,
-      title: "Digital Marketing",
-      description: "Strategic digital marketing campaigns to boost your online presence and reach."
-    },
-    {
-      id: 7,
-      title: "Social Media Marketing",
-      description: "Engaging content and strategies to grow your social media presence and engagement."
-    },
-    {
-      id: 9,
-      title: "Research and Consultancy",
-      description: "In-depth research and expert consultancy to drive strategic business decisions."
-    },
-    {
-      id: 10,
-      title: "Data Science and Data Analytics",
-      description: "Transform raw data into actionable insights for informed business strategies."
-    },
-    {
-      id: 8,
-      title: "Training Institute",
-      description: "Professional training programs to upskill your team with industry-relevant expertise."
-    },
-    {
-      id: 11,
-      title: "IoT Development",
-      description: "Smart device integration and Internet of Things solutions for connected ecosystems."
-    },
-  ]);
-  // Map icons dynamically if API doesn’t send them
-  const getIcon = (name) => {
-    if (!name) return <Code className="w-10 h-10 text-accent" />;
-    const lower = name.toLowerCase();
-    if (lower.includes("web")) return <Code className="w-10 h-10 text-accent" />;
-    if (lower.includes("mobile") || lower.includes("app")) return <Smartphone className="w-10 h-10 text-accent" />;
-    if (lower.includes("ai")) return <Bot className="w-10 h-10 text-accent" />;
-    if (lower.includes("automation")) return <Zap className="w-10 h-10 text-accent" />;
-    if (lower.includes("graphic") || lower.includes("design")) return <Palette className="w-10 h-10 text-accent" />;
-    if (lower.includes("digital marketing")) return <TrendingUp className="w-10 h-10 text-accent" />;
-    if (lower.includes("social media")) return <Share2 className="w-10 h-10 text-accent" />;
-    if (lower.includes("training")) return <GraduationCap className="w-10 h-10 text-accent" />;
-    if (lower.includes("research") || lower.includes("consultancy")) return <Briefcase className="w-10 h-10 text-accent" />;
-    if (lower.includes("data")) return <BarChart3 className="w-10 h-10 text-accent" />;
-    if (lower.includes("iot")) return <Wifi className="w-10 h-10 text-accent" />;
-    return <Code className="w-10 h-10 text-accent" />;
+  const [services, setServices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await api.get('/services');
+        setServices(response.data.data || []);
+      } catch (err) {
+        setError(err.response?.data?.message || err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchServices();
+  }, []);
+
+  // Get icon component dynamically based on service icon field
+  const getIcon = (iconName) => {
+    const IconComponent = ICON_MAP[iconName] || Code;
+    return <IconComponent className="w-10 h-10 text-accent" />;
   };
 
   return (
@@ -96,41 +61,58 @@ function Services() {
         </p>
       </section>
 
-      {/* Service Cards */}
-      <section className="py-16">
-        <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-          {services.map((s, i) => (
-            <motion.div
-              key={s.id || i}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: i * 0.2 }}
-              viewport={{ once: true }}
-              className="bgcard rounded-xl p-6 text-center hover:scale-105 transition-transform hover:shadow-accent"
-            >
-              <div className="flex justify-center mb-4">
-                {getIcon(s.title)}
-              </div>
-              <h3 className="text-lg sm:text-xl font-semibold text-accent">
-                {s.title}
-              </h3>
-              <p className="mt-3 text-gray-200 text-sm sm:text-base">
-                {s.desc || s.description}
-              </p>
-              {/* <Link
-                  to={`/services/${s.id}`}
-                  className="mt-4 inline-block text-accent font-semibold hover:underline"
-                >
-                  Learn More →
-                </Link> */}
-            </motion.div>))}
+      {/* Error State */}
+      {error && (
+        <div className="container mx-auto px-6 text-center">
+          <p className="text-red-400 mb-4">{error}</p>
         </div>
-      </section>
+      )}
+
+      {/* Loading State */}
+      {loading && (
+        <div className="container mx-auto px-6 text-center">
+          <p className="text-gray-400">Loading services...</p>
+        </div>
+      )}
+
+      {/* Service Cards */}
+      {!loading && !error && (
+        <section className="py-16">
+          {services.length === 0 ? (
+            <div className="container mx-auto px-6 text-center">
+              <p className="text-gray-400">No services available at the moment.</p>
+            </div>
+          ) : (
+            <div className="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
+              {services.map((s, i) => (
+                <motion.div
+                  key={s.id || i}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: i * 0.1 }}
+                  viewport={{ once: true }}
+                  className="bgcard rounded-xl p-6 text-center hover:scale-105 transition-transform hover:shadow-accent"
+                >
+                  <div className="flex justify-center mb-4">
+                    {getIcon(s.icon)}
+                  </div>
+                  <h3 className="text-lg sm:text-xl font-semibold text-accent">
+                    {s.title}
+                  </h3>
+                  <p className="mt-3 text-gray-200 text-sm sm:text-base">
+                    {s.description}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
 
       {/* Call To Action */}
       <section className="bgcard py-16 text-center rounded-2xl mx-6">
         <h2 className="text-2xl sm:text-3xl font-bold text-accent">
-          Let’s Build Your Next Project!
+          Let's Build Your Next Project!
         </h2>
         <p className="mt-4 text-gray-200">
           From websites to mobile apps, we deliver excellence in every project.
@@ -147,3 +129,4 @@ function Services() {
 }
 
 export default Services;
+

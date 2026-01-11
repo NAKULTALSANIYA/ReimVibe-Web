@@ -1,5 +1,3 @@
-
-
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -7,13 +5,21 @@ import cookieParser from 'cookie-parser';
 import path from "path";
 import { fileURLToPath } from "url";
 import { readFileSync } from 'fs';
-import connectDB from './config/database.js';
+import { connectDB } from './config/database.js';
 import serviceRoutes from './routes/serviceRoutes.js';
 import projectRoutes from './routes/projectRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import jobRoutes from './routes/jobRoutes.js';
 import applicationRoutes from './routes/applicationRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
+
+// Import models to set up associations
+import './models/Admin.js';
+import './models/Service.js';
+import './models/Project.js';
+import './models/Contact.js';
+import './models/Job.js';
+import './models/Application.js';
 
 dotenv.config();
 
@@ -22,11 +28,12 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-connectDB();
+// Initialize database connection
+const sequelize = connectDB();
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -43,11 +50,14 @@ app.use('/api/jobs', jobRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/admin', adminRoutes);
 
+// Serve uploaded files
+app.use('/uploads', express.static(path.join(__dirname, "./uploads")));
+
 // Serve static files from the dist directory
 app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
 // SPA fallback - Handle all non-API routes by serving index.html
-app.get('*', (req, res, next) => {
+app.get('*s', (req, res, next) => {
   // Skip API routes and static files
   if (req.url.startsWith('/api/') || 
       req.url.includes('.') || 
@@ -84,7 +94,20 @@ app.get('*', (req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Frontend will be served from: http://localhost:${PORT}`);
-});
+// Start server function
+const startServer = async () => {
+  try {
+    // Connect to database and sync models
+    await connectDB();
+    
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+      console.log(`Frontend will be served from: http://localhost:${PORT}`);
+    });
+  } catch (err) {
+    console.error('Failed to start server:', err);
+    process.exit(1);
+  }
+};
+
+startServer();

@@ -27,6 +27,11 @@ function Careers() {
     resume: ""
   });
   const [submitting, setSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [formSuccess, setFormSuccess] = useState(false);
+  const [jobData, setJobData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchJobs();
@@ -35,7 +40,9 @@ function Careers() {
   const fetchJobs = async () => {
     try {
       const response = await api.get('/jobs');
-      setJobData(response.data.data || []);
+      // Filter only open jobs
+      const openJobs = (response.data.data || []).filter(job => job.status === 'Open');
+      setJobData(openJobs);
     } catch (err) {
       setError(err.response?.data?.message || err.message);
       setJobData([]);
@@ -44,18 +51,34 @@ function Careers() {
     }
   };
 
+  const handleApply = (job) => {
+    setSelectedJob(job);
+    setShowApplicationModal(true);
+  };
+
   const handleApplicationSubmit = async (e) => {
     e.preventDefault();
+    // Prevent multiple submissions
+    if (isSubmitted || submitting) return;
+    
     setSubmitting(true);
     try {
       await api.post('/applications', {
         ...applicationData,
-        jobId: selectedJob._id
+        jobId: selectedJob.id
       });
+      setIsSubmitted(true);
+      setFormSuccess(true);
       toast.success('Application submitted successfully!');
-      setApplicationData({ name: "", email: "", phone: "", resume: "" });
-      setShowApplicationModal(false);
-      setSelectedJob(null);
+      
+      // Show success message in modal before closing
+      setTimeout(() => {
+        setApplicationData({ name: "", email: "", phone: "", resume: "" });
+        setShowApplicationModal(false);
+        setSelectedJob(null);
+        setIsSubmitted(false);
+        setFormSuccess(false);
+      }, 2000);
     } catch (err) {
       toast.error('Failed to submit application: ' + (err.response?.data?.message || err.message));
     } finally {
@@ -86,7 +109,7 @@ function Careers() {
         </motion.h1>
         <p className="mt-4 max-w-2xl mx-auto text-sm sm:text-base md:text-lg text-gray-200">
           Be a part of <span className="text-accent font-semibold">Reimvibe Technologies</span> where innovation meets opportunity.  
-          Let’s grow and build the future together.
+          Let's grow and build the future together.
         </p>
       </section>
 
@@ -113,19 +136,21 @@ function Careers() {
       </section>
 
       {/* Open Positions */}
-      {/* <section className="py-16 container mx-auto px-6">
-        <h2 className="text-2x7l sm:text-3xl font-bold text-center mb-10 text-accent ">
+      <section className="py-16 container mx-auto px-6">
+        <h2 className="text-2xl sm:text-3xl font-bold text-center mb-10 text-accent ">
           Open Positions
         </h2>
         {loading ? (
-          <p className="text-center">Loading jobs...</p>
+          <p className="text-center text-gray-400">Loading jobs...</p>
         ) : error ? (
           <p className="text-center text-red-500">{error}</p>
+        ) : jobData.length === 0 ? (
+          <p className="text-center text-gray-400">No open positions at the moment. Check back later!</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {jobData.map((job, i) => (
               <motion.div
-                key={job._id}
+                key={job.id || i}
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: i * 0.2 }}
@@ -147,67 +172,88 @@ function Careers() {
             ))}
           </div>
         )}
-      </section> */}
+      </section>
 
       {/* Application Modal */}
       {showApplicationModal && selectedJob && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-gray-800 border border-yellow-400 p-6 rounded-xl w-96 shadow-lg max-h-[90vh] overflow-y-auto">
-            <h2 className="text-lg font-semibold mb-4 text-white">Apply for {selectedJob.title}</h2>
-            <form onSubmit={handleApplicationSubmit} className="space-y-3">
-              <input
-                type="text"
-                placeholder="Full Name"
-                value={applicationData.name}
-                onChange={(e) => setApplicationData({ ...applicationData, name: e.target.value })}
-                className="w-full border border-gray-600 bg-gray-700 text-white p-2 rounded-md placeholder-gray-400"
-                required
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                value={applicationData.email}
-                onChange={(e) => setApplicationData({ ...applicationData, email: e.target.value })}
-                className="w-full border border-gray-600 bg-gray-700 text-white p-2 rounded-md placeholder-gray-400"
-                required
-              />
-              <input
-                type="tel"
-                placeholder="Phone Number"
-                value={applicationData.phone}
-                onChange={(e) => setApplicationData({ ...applicationData, phone: e.target.value })}
-                className="w-full border border-gray-600 bg-gray-700 text-white p-2 rounded-md placeholder-gray-400"
-                required
-              />
-              <input
-                type="url"
-                placeholder="Resume URL (optional)"
-                value={applicationData.resume}
-                onChange={(e) => setApplicationData({ ...applicationData, resume: e.target.value })}
-                className="w-full border border-gray-600 bg-gray-700 text-white p-2 rounded-md placeholder-gray-400"
-              />
+            {!formSuccess ? (
+              <>
+                <h2 className="text-lg font-semibold mb-4 text-white">Apply for {selectedJob.title}</h2>
+                <form onSubmit={handleApplicationSubmit} className="space-y-3">
+                  <input
+                    type="text"
+                    placeholder="Full Name"
+                    value={applicationData.name}
+                    onChange={(e) => setApplicationData({ ...applicationData, name: e.target.value })}
+                    className="w-full border border-gray-600 bg-gray-700 text-white p-2 rounded-md placeholder-gray-400"
+                    required
+                  />
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    value={applicationData.email}
+                    onChange={(e) => setApplicationData({ ...applicationData, email: e.target.value })}
+                    className="w-full border border-gray-600 bg-gray-700 text-white p-2 rounded-md placeholder-gray-400"
+                    required
+                  />
+                  <input
+                    type="tel"
+                    placeholder="Phone Number"
+                    value={applicationData.phone}
+                    onChange={(e) => setApplicationData({ ...applicationData, phone: e.target.value })}
+                    className="w-full border border-gray-600 bg-gray-700 text-white p-2 rounded-md placeholder-gray-400"
+                    required
+                  />
+                  <input
+                    type="url"
+                    placeholder="Resume URL (optional)"
+                    value={applicationData.resume}
+                    onChange={(e) => setApplicationData({ ...applicationData, resume: e.target.value })}
+                    className="w-full border border-gray-600 bg-gray-700 text-white p-2 rounded-md placeholder-gray-400"
+                  />
 
-              <div className="flex justify-end gap-3 mt-4">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setShowApplicationModal(false);
-                    setSelectedJob(null);
-                    setApplicationData({ name: "", email: "", phone: "", resume: "" });
-                  }}
-                  className="px-4 py-2 rounded-md border border-gray-600 text-white hover:bg-gray-600"
+                  <div className="flex justify-end gap-3 mt-4">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowApplicationModal(false);
+                        setSelectedJob(null);
+                        setApplicationData({ name: "", email: "", phone: "", resume: "" });
+                      }}
+                      className="px-4 py-2 rounded-md border border-gray-600 text-white hover:bg-gray-600"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={submitting || isSubmitted}
+                      className="bg-yellow-400 px-6 py-2 rounded-md font-semibold hover:bg-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {submitting ? "Submitting..." : isSubmitted ? "Submitted" : "Submit Application"}
+                    </button>
+                  </div>
+                </form>
+              </>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="text-center py-8"
+              >
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 200, damping: 10 }}
+                  className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4"
                 >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="bg-yellow-400 px-6 py-2 rounded-md font-semibold hover:bg-yellow-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {submitting ? "Submitting..." : "Submit Application"}
-                </button>
-              </div>
-            </form>
+                  <span className="text-3xl text-white">✓</span>
+                </motion.div>
+                <h3 className="text-xl font-semibold text-white mb-2">Application Sent!</h3>
+                <p className="text-gray-300 text-sm">Thank you for applying. We'll review your application and get back to you soon.</p>
+              </motion.div>
+            )}
           </div>
         </div>
       )}
@@ -244,3 +290,4 @@ function Careers() {
 }
 
 export default Careers;
+

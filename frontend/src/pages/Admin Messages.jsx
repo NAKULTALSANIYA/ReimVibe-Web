@@ -36,11 +36,35 @@ export default function Messages() {
 
   const handleDelete = (id) => {
     confirmAlert({
-      title: "Confirm Delete",
-      message: "Are you sure you want to delete this message?",
+      title: (
+        <div className="flex items-center gap-2">
+          <svg className="warning-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          <span>Delete Message?</span>
+        </div>
+      ),
+      message: (
+        <div className="custom-confirm-dialog">
+          <p className="text-gray-600">Are you sure you want to permanently delete this message?</p>
+          <p className="text-sm text-gray-400 mt-2">This action cannot be undone.</p>
+        </div>
+      ),
       buttons: [
         {
-          label: "Yes",
+          label: (
+            <span className="flex items-center gap-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                <line x1="10" y1="11" x2="10" y2="17"></line>
+                <line x1="14" y1="11" x2="14" y2="17"></line>
+              </svg>
+              Delete
+            </span>
+          ),
           onClick: async () => {
             setDeleting(id);
             try {
@@ -55,9 +79,20 @@ export default function Messages() {
           },
         },
         {
-          label: "No",
+          label: (
+            <span className="flex items-center gap-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+              Cancel
+            </span>
+          ),
         },
       ],
+      closeOnEscape: true,
+      closeOnClickOutside: true,
+      overlayClassName: "confirm-overlay",
     });
   };
 
@@ -81,8 +116,8 @@ export default function Messages() {
               </tr>
             </thead>
             <tbody>
-              {messages.map((msg) => (
-                <tr key={msg._id} className="border-t">
+            {messages.map((msg) => (
+                <tr key={msg.id} className="border-t">
                   <td className="py-2">{msg.name}</td>
                   <td className="py-2">{msg.email}</td>
                   <td className="py-2">{msg.phone}</td>
@@ -100,12 +135,12 @@ export default function Messages() {
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
-                      onClick={() => handleDelete(msg._id)}
-                      disabled={deleting === msg._id}
+                      onClick={() => handleDelete(msg.id)}
+                      disabled={deleting === msg.id}
                       className="flex items-center gap-1 px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Trash2 size={16} />
-                      {deleting === msg._id ? "Deleting..." : "Delete"}
+                      {deleting === msg.id ? "Deleting..." : "Delete"}
                     </motion.button>
                   </td>
                 </tr>

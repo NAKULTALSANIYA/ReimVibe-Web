@@ -17,6 +17,15 @@ router.post('/setup', setupAdmin);
 router.post('/login', loginAdmin);
 
 // Protected routes (authentication required)
+router.post('/logout', protect, (req, res) => {
+  res.cookie('token', '', {
+    expires: new Date(0),
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax'
+  });
+  res.json({ message: 'Logged out successfully' });
+});
 router.get('/profile', protect, getAdminProfile);
 router.get('/all', protect, getAllAdmins);
 router.post('/create', protect, createAdmin);
